@@ -5819,6 +5819,20 @@ html.rol-alumno .gear-fab{display:none!important}
 /* Los cuadros emergentes se centran «de forma segura»: si no caben, se desplazan en vez de cortarse por arriba */
 .modal:not(#startMenu){place-items:safe center;align-items:safe center;justify-items:center;overflow-y:auto;overscroll-behavior:contain}
 .modal:not(#startMenu)>div{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);margin:0}
+/* ===== v29: cabecera ordenada: botones cortos, misma altura, ajustes e inicio de sesión como iconos ===== */
+header .hdr-meta{gap:8px;align-items:center}
+header .mode-pill,header .err-pill,header .menu-btn,#setBtn,#acctBtn{height:34px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:999px!important;padding:0 14px!important;font:600 13px var(--f-ui,system-ui,sans-serif)!important;line-height:1;white-space:nowrap}
+header .mode-pill{padding:0 14px!important;letter-spacing:.2px}
+header .err-pill{padding:0 12px!important}
+header .err-pill:not(.on){display:none!important}
+header .menu-btn,#setBtn{background:#ffffff14!important;color:#fff!important;border:1px solid #ffffff33!important}
+header .menu-btn:hover,#setBtn:hover{background:#ffffff26!important;border-color:#fff8!important}
+#setBtn{width:34px;padding:0!important;font-size:17px!important}
+#setBtn .mu{font-size:10px;position:absolute;margin:18px 0 0 18px}
+#setBtn{position:relative}
+#acctBtn{padding:0 14px 0 3px!important}#acctBtn.in{padding:0 3px!important;width:34px}
+header .hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+@media(max-width:700px){header .mode-pill,header .err-pill,header .menu-btn{height:30px;padding:0 10px!important;font-size:12px!important}#setBtn{height:30px;width:30px;position:absolute!important;top:8px;right:50px;z-index:3}header .err-dots{display:none!important}}
 </style>
 <script id="v28">
 (function(){'use strict';
@@ -5842,6 +5856,16 @@ function hideSpoilers(){
  if(cs)cs.textContent='Identifica el diagnóstico con la clínica, monitor, ECG y laboratorios';
  const first=lg0&&lg0.lastElementChild;if(first&&/Inicia:/.test(first.textContent))first.textContent='00:00  '+TAG+': diagnóstico oculto hasta el Debriefing. Evalúa al paciente.'}
 /* start() borraba el modo sorpresa (dos versiones del código se pisaban); ahora se respeta también al reiniciar */
+/* Textos cortos en la cabecera */
+guard('hdr-txt',()=>{
+ const mb=document.getElementById('modeBadge');
+ const shortMode=()=>{if(!mb)return;const x=mb.classList.contains('exam');const t=x?'🚨 Examen':'🎓 Aprendizaje';if(mb.textContent!==t)mb.textContent=t;mb.title=x?'Modo Examen: máximo 4 errores':'Modo Aprendizaje: con pistas'};
+ if(typeof applyModeUI==='function'){const _am=applyModeUI;applyModeUI=function(){const r=_am.apply(this,arguments);guard('am',shortMode);return r}}
+ shortMode();
+ const eb=document.getElementById('errBadge');if(eb&&eb.firstChild&&eb.firstChild.nodeType===3)eb.firstChild.nodeValue='⚠️ ';
+ document.querySelectorAll('header .menu-btn').forEach(b=>{if(/Menú \/ Modo/.test(b.textContent)){b.textContent='☰ Menú';b.title='Menú y modo de práctica'}});
+ const tb=document.getElementById('toolsBtn');if(tb){tb.textContent='🧰 Extras';tb.title='Herramientas: accesibilidad, evolución, instructor…'}
+});
 const _start=start;
 start=function(){const r=_start.apply(this,arguments);guard('sorpresa',()=>{if(BLIND){blindUI(true);hideSpoilers()}});return r};
 window.startBlindCase=function(fromMenu){
@@ -5878,6 +5902,20 @@ window.ACLS_CONFIG=Object.assign({supabaseUrl:'https://mqeysyazqkgywyokesnc.supa
 .ac-msg{min-height:1.3em;margin:6px 0;font-weight:600}.ac-msg.err{color:#b91c1c}.ac-msg.ok{color:#15803d}
 .ac-link{background:none;border:0;color:#C10E21;text-decoration:underline;cursor:pointer;font:inherit;padding:2px}
 .ac-danger{border-color:#b91c1c66}.ac-danger h4{color:#b91c1c;margin:0 0 6px}
+#acctBtn{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1px solid #ffffff55;border-radius:999px;padding:3px 12px 3px 4px;cursor:pointer;font:600 13px system-ui,sans-serif;white-space:nowrap;min-height:34px}
+#acctBtn:hover{background:#ffffff1c}
+#acctBtn .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:none;background:#64748b}
+#acctBtn .av svg{width:16px;height:16px}
+#acctBtn.in{padding:2px}#acctBtn.in .av{width:30px;height:30px;font-size:15px}#acctBtn.in .lb{display:none}
+@media(max-width:700px){#acctBtn .lb{display:none}#acctBtn{padding:2px;position:absolute;top:8px;right:8px;z-index:3}}
+#acctMenu{position:fixed;z-index:70;min-width:250px;max-width:calc(100vw - 20px);background:#fff;color:#111;border-radius:12px;box-shadow:0 10px 36px #0006;padding:6px;display:none;font:14px system-ui,sans-serif}
+#acctMenu .who{display:flex;gap:10px;align-items:center;padding:10px 10px 12px;border-bottom:1px solid #0002;margin-bottom:4px}
+#acctMenu .who .av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:19px;color:#fff;flex:none}
+#acctMenu .who b{display:block;overflow:hidden;text-overflow:ellipsis;max-width:180px}#acctMenu .who small{display:block;opacity:.7;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+#acctMenu button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:10px;font:inherit;color:inherit;cursor:pointer;min-height:40px}
+#acctMenu button:hover,#acctMenu button:focus-visible{background:#C10E2114}
+#acctMenu .st{padding:2px 10px 6px;font-size:12px;opacity:.7}
+#acctMenu hr{border:0;border-top:1px solid #0002;margin:4px 0}
 #v29Toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:10px;z-index:9999;max-width:90vw;box-shadow:0 4px 16px #0006;font-size:.95em}
 </style>
 <script id="v29">
@@ -6086,7 +6124,7 @@ async function readHash(){
 /* =====================================================================
    3) CENTRO DE AJUSTES (pestañas)
    ===================================================================== */
-const TABS=[['sonido','🔊 Sonido'],['voz','🗣 Voz'],['cuenta','👤 Cuenta'],['mas','🧰 Más']];
+const TABS=[['sonido','🔊 Sonido'],['voz','🗣 Voz'],['mas','🧰 Más']];
 let CUR='sonido';
 const V=()=>window.__v26&&window.__v26.voice;
 function srow(id,label,sub,val,test){return`<div class="sn-row"><label for="${id}">${label}${sub?`<small>${sub}</small>`:''}</label><input id="${id}" type="range" min="0" max="100" step="5" value="${Math.round(val*100)}"><b id="${id}V">${Math.round(val*100)}%</b><button type="button" id="${id}T" title="Probar" aria-label="Probar ${E(label)}">▶</button></div>`}
@@ -6143,24 +6181,24 @@ function paneAccount(){
 function ui(){guard('ui',()=>{const s=$g('acStat');if(s){const m={idle:'Listo para sincronizar.',syncing:'⏳ Sincronizando…',ok:'✅ Sincronizado '+ago(st.last),offline:'📴 Sin conexión · se sincronizará al volver',error:'⚠️ '+st.err}[st.s]||'';s.textContent=m+(st.s==='offline'&&st.err?'':'')}});refreshBtn()}
 function bindAccount(){
  const g=$g,msg=(t,k)=>{const m=g('acMsg');if(m){m.textContent=t||'';m.className='ac-msg '+(k||'')}};
- document.querySelectorAll('.ac-link').forEach(b=>b.onclick=()=>{VIEW=b.dataset.v;hashMsg='';render()});
+ document.querySelectorAll('.ac-link').forEach(b=>b.onclick=()=>{VIEW=b.dataset.v;hashMsg='';renderAcct()});
  const f=g('acForm'),go=g('acGo');
  const lock=(on)=>{document.querySelectorAll('#acForm button,#acForm input').forEach(x=>x.disabled=on)};
  const run_=async fn=>{lock(true);msg('Un momento…');try{await fn()}catch(e){msg(e.expired?'Tu sesión caducó: vuelve a iniciar sesión.':errText(e),'err')}finally{lock(false)}};
  if(f){f.onsubmit=ev=>{ev.preventDefault();
   const email=(g('acEmail')||{}).value&&g('acEmail').value.trim(),pw=(g('acPw')||{}).value||'';
-  if(S&&VIEW==='recovery'){if(pw.length<8)return msg('Usa al menos 8 caracteres.','err');return run_(async()=>{await doNewPass(pw);VIEW='in';hashMsg='✅ Contraseña actualizada.';render();syncNow()})}
+  if(S&&VIEW==='recovery'){if(pw.length<8)return msg('Usa al menos 8 caracteres.','err');return run_(async()=>{await doNewPass(pw);VIEW='in';hashMsg='✅ Contraseña actualizada.';renderAcct();syncNow()})}
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return msg('Escribe un correo válido.','err');
   if(VIEW==='forgot')return run_(async()=>{await doForgot(email);msg('Si ese correo tiene cuenta, te enviamos un enlace para crear una contraseña nueva.','ok')});
   if(VIEW==='signup'){if(pw.length<8)return msg('La contraseña debe tener al menos 8 caracteres.','err');
-   return run_(async()=>{const r=await doSignUp(((g('acName')||{}).value||'').trim().slice(0,60),email,pw);if(r==='in'){hashMsg='✅ Cuenta creada. Tu progreso ya se está guardando.';VIEW='in';render()}else msg('Te enviamos un correo para confirmar tu cuenta. Ábrelo y regresa aquí (revisa también spam).','ok')})}
+   return run_(async()=>{const r=await doSignUp(((g('acName')||{}).value||'').trim().slice(0,60),email,pw);if(r==='in'){hashMsg='✅ Cuenta creada. Tu progreso ya se está guardando.';VIEW='in';renderAcct()}else msg('Te enviamos un correo para confirmar tu cuenta. Ábrelo y regresa aquí (revisa también spam).','ok')})}
   if(!pw)return msg('Escribe tu contraseña.','err');
-  return run_(async()=>{await doSignIn(email,pw);hashMsg='';VIEW='in';if(CUR==='cuenta')render()})}}
+  return run_(async()=>{await doSignIn(email,pw);hashMsg='';VIEW='in';renderAcct()})}}
  if(g('acSync'))g('acSync').onclick=async()=>{await syncNow(true);ui()};
- if(g('acOut'))g('acOut').onclick=async()=>{await doSignOut(false);VIEW='login';hashMsg='Sesión cerrada.';render()};
+ if(g('acOut'))g('acOut').onclick=async()=>{await doSignOut(false);VIEW='login';hashMsg='Sesión cerrada.';renderAcct()};
  if(g('acWipe'))g('acWipe').onclick=async()=>{if(confirm('Se borrarán de ESTE dispositivo tu historial, tarjetas y preferencias (lo sincronizado queda en tu cuenta). ¿Continuar?'))await doSignOut(true)};
  if(g('acDelCloud'))g('acDelCloud').onclick=async()=>{if(!confirm('¿Borrar tu progreso guardado en la nube? Lo que está en este dispositivo no se borra.'))return;try{await doDeleteCloud();msg('Progreso en la nube borrado.','ok')}catch(e){msg(errText(e),'err')}};
- if(g('acDelAcc'))g('acDelAcc').onclick=async()=>{if(!confirm('¿ELIMINAR tu cuenta y todo tu progreso en la nube? No se puede deshacer.'))return;try{await doDeleteAccount();VIEW='login';hashMsg='Tu cuenta fue eliminada.';render()}catch(e){msg(errText(e)+(e.status===404?' (Falta la función delete_my_account en Supabase.)':''),'err')}};
+ if(g('acDelAcc'))g('acDelAcc').onclick=async()=>{if(!confirm('¿ELIMINAR tu cuenta y todo tu progreso en la nube? No se puede deshacer.'))return;try{await doDeleteAccount();VIEW='login';hashMsg='Tu cuenta fue eliminada.';renderAcct()}catch(e){msg(errText(e)+(e.status===404?' (Falta la función delete_my_account en Supabase.)':''),'err')}};
  ui()}
 
 /* ----- pestaña Más ----- */
@@ -6179,26 +6217,68 @@ function bindMore(){const g=$g;
   if(ch.length){guard('f',()=>sessionStorage.setItem('acls.v29.toast','✅ Progreso importado'));location.reload()}else toast('Ya tenías todo ese progreso.')})}
 
 function render(){
- const pane=CUR==='sonido'?paneSound():CUR==='voz'?(V()?V().voiceHTML():'<p>Voz no disponible.</p>'):CUR==='cuenta'?paneAccount():paneMore();
- XM.mk('vcMod',`<h2 style="margin-top:0">⚙ Ajustes</h2><div class="st-tabs" role="tablist" aria-label="Secciones de ajustes">${TABS.map(([id,l])=>`<button type="button" role="tab" id="tab-${id}" data-tab="${id}" aria-selected="${id===CUR}" tabindex="${id===CUR?0:-1}">${l}${id==='cuenta'&&S?' ☁':''}</button>`).join('')}</div><div role="tabpanel" aria-labelledby="tab-${CUR}" id="stPane">${pane}</div><p style="margin-top:12px"><button type="button" id="stClose">Cerrar</button></p>`);
+ const pane=CUR==='sonido'?paneSound():CUR==='voz'?(V()?V().voiceHTML():'<p>Voz no disponible.</p>'):paneMore();
+ XM.mk('vcMod',`<h2 style="margin-top:0">⚙ Ajustes</h2><div class="st-tabs" role="tablist" aria-label="Secciones de ajustes">${TABS.map(([id,l])=>`<button type="button" role="tab" id="tab-${id}" data-tab="${id}" aria-selected="${id===CUR}" tabindex="${id===CUR?0:-1}">${l}</button>`).join('')}</div><div role="tabpanel" aria-labelledby="tab-${CUR}" id="stPane">${pane}</div><p style="margin-top:12px"><button type="button" id="stClose">Cerrar</button></p>`);
  const tabs=[...document.querySelectorAll('#vcMod .st-tabs button')];
  tabs.forEach((b,i)=>{b.onclick=()=>{CUR=b.dataset.tab;render();const n=$g('tab-'+CUR);if(n)n.focus()};
   b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.click()}}});
  $g('stClose').onclick=()=>XM.close('vcMod');
- if(CUR==='sonido')bindSound();else if(CUR==='voz')V()&&V().voiceBind();else if(CUR==='cuenta')bindAccount();else bindMore()}
-function openSettings(tab){if(tab&&TABS.some(t=>t[0]===tab))CUR=tab;render();XM.open('vcMod')}
-window.openSettings=openSettings;window.openVoice=()=>openSettings();
+ if(CUR==='sonido')bindSound();else if(CUR==='voz')V()&&V().voiceBind();else bindMore()}
+/* ----- cuadro propio de la cuenta (separado de Ajustes) ----- */
+function renderAcct(){
+ const rec=S&&VIEW==='recovery';
+ XM.mk('acMod',`<h2 style="margin-top:0">${rec?'🔑 Nueva contraseña':'👤 Cuenta'}</h2>${paneAccount()}<p style="margin-top:12px"><button type="button" id="acClose">Cerrar</button></p>`);
+ $g('acClose').onclick=()=>XM.close('acMod');bindAccount()}
+function openAccount(){if(VIEW==='in'&&!S)VIEW='login';if(S&&VIEW!=='recovery')VIEW='in';renderAcct();XM.open('acMod')}
+function openSettings(tab){if(tab==='cuenta')return openAccount();if(tab&&TABS.some(t=>t[0]===tab))CUR=tab;render();XM.open('vcMod')}
+window.openAccount=openAccount;window.openSettings=openSettings;window.openVoice=()=>openSettings();
+
+
+/* ----- icono de cuenta arriba a la derecha (como GitHub / YouTube) ----- */
+const hue=t=>{let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))%360;return 'hsl('+h+' 55% 42%)'};
+const initial=()=>{const n=(S&&(S.user.name||S.user.email))||'?';return n.trim().charAt(0).toUpperCase()||'?'};
+const PERSON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>';
+function menuClose(){const m=$g('acctMenu');if(m)m.style.display='none';const b=$g('acctBtn');if(b)b.setAttribute('aria-expanded','false')}
+function menuOpen(){
+ let m=$g('acctMenu');if(!m){m=document.createElement('div');m.id='acctMenu';m.setAttribute('role','menu');document.body.appendChild(m)}
+ const stat=st.s==='syncing'?'⏳ Sincronizando…':st.s==='ok'?'✅ Sincronizado '+ago(st.last):st.s==='offline'?'📴 Sin conexión':st.s==='error'?'⚠️ '+E(st.err):'';
+ m.innerHTML=`<div class="who"><span class="av" style="background:${hue(S.user.email)}">${E(initial())}</span><div><b>${E(S.user.name||'Mi cuenta')}</b><small>${E(S.user.email)}</small></div></div>
+ <div class="st" id="amSt">${stat}</div>
+ <button type="button" role="menuitem" data-a="evo">📈 Mi evolución</button>
+ <button type="button" role="menuitem" data-a="sync">☁ Sincronizar ahora</button>
+ <button type="button" role="menuitem" data-a="acc">👤 Mi cuenta</button>
+ <button type="button" role="menuitem" data-a="set">⚙ Ajustes</button><hr>
+ <button type="button" role="menuitem" data-a="out">↩ Cerrar sesión</button>`;
+ const b=$g('acctBtn'),r=b.getBoundingClientRect();m.style.display='block';m.style.right='auto';m.style.top=Math.round(r.bottom+8)+'px';const mw=m.offsetWidth;m.style.left=Math.max(8,Math.min(Math.round(r.right-mw),innerWidth-mw-8))+'px';
+ b.setAttribute('aria-expanded','true');
+ m.onclick=async e=>{const a=e.target.closest('button');if(!a)return;const k=a.dataset.a;
+  if(k==='sync'){const t=$g('amSt');if(t)t.textContent='⏳ Sincronizando…';await syncNow(true);if(m.style.display!=='none')menuOpen();return}
+  menuClose();
+  if(k==='evo'&&window.ACLSHist)ACLSHist.open();else if(k==='acc')openAccount();else if(k==='set')openSettings('sonido');
+  else if(k==='out'){await doSignOut(false);VIEW='login';hashMsg='Sesión cerrada.';toast('Sesión cerrada');refreshBtn()}};
+ const f=m.querySelector('button');if(f)f.focus()}
+function refreshAcct(){let b=$g('acctBtn');
+ if(!CONFIGURED){if(b)b.style.display='none';return}
+ if(!b){const hdr=document.querySelector('header');if(!hdr)return;b=document.createElement('button');b.id='acctBtn';b.type='button';b.setAttribute('aria-haspopup','menu');b.setAttribute('aria-expanded','false');
+  b.onclick=()=>{if(!S){openAccount();return}const m=$g('acctMenu');if(m&&m.style.display==='block')menuClose();else menuOpen()};
+  const sb=$g('setBtn');sb&&sb.parentNode?sb.parentNode.insertBefore(b,sb.nextSibling):hdr.appendChild(b)}
+ b.style.display='';b.classList.toggle('in',!!S);
+ if(S){b.innerHTML=`<span class="av" style="background:${hue(S.user.email)}">${E(initial())}</span>`;b.title=S.user.email;b.setAttribute('aria-label','Cuenta de '+S.user.email)}
+ else{b.innerHTML=`<span class="av">${PERSON}</span><span class="lb">Entrar</span>`;b.title='Iniciar sesión o crear cuenta';b.setAttribute('aria-label','Iniciar sesión o crear cuenta')}}
+document.addEventListener('click',e=>{const m=$g('acctMenu');if(m&&m.style.display==='block'&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('#acctBtn')))menuClose()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const m=$g('acctMenu');if(m&&m.style.display==='block'){menuClose();const b=$g('acctBtn');if(b)b.focus()}}});
+addEventListener('resize',menuClose);
 
 /* ----- botón «⚙ Ajustes» en la cabecera (sustituye al control de volumen) ----- */
-function refreshBtn(){const b=$g('setBtn');if(!b)return;const off=(typeof MUT!=='undefined'&&MUT)||VOL<=0;
- b.textContent='⚙ Ajustes'+(off?' 🔇':'')+(S?' ☁':'');b.title='Ajustes: sonido, voz, cuenta'+(off?' (sonido silenciado)':'');b.setAttribute('aria-label','Ajustes'+(off?', sonido silenciado':'')+(S?', sesión iniciada':''))}
+function refreshBtn(){guard('acct0',refreshAcct);const b=$g('setBtn');if(!b)return;const off=(typeof MUT!=='undefined'&&MUT)||VOL<=0;
+ b.innerHTML='⚙'+(off?'<span class="mu" aria-hidden="true">🔇</span>':'');b.title='Ajustes: sonido, voz, cuenta'+(off?' (sonido silenciado)':'');b.setAttribute('aria-label','Ajustes'+(off?', sonido silenciado':''));guard('acct',refreshAcct)}
 guard('hdr',()=>{if($g('setBtn'))return;const snd=document.querySelector('header .snd'),hdr=document.querySelector('header');if(!hdr)return;
  const b=document.createElement('button');b.id='setBtn';b.type='button';b.className='menu-btn';b.onclick=()=>openSettings();
  snd?snd.parentNode.insertBefore(b,snd):hdr.appendChild(b);refreshBtn()});
 const _volUI=volUI;volUI=function(){const r=_volUI.apply(this,arguments);guard('btn',refreshBtn);return r};
-guard('tools',()=>{const t=XM.tools.find(x=>/Ajustes/.test(x[0]));if(t){t[0]='⚙ Ajustes (sonido, voz, cuenta…)';t[1]=()=>openSettings()}});
+guard('tools',()=>{const t=XM.tools.find(x=>/Ajustes/.test(x[0]));if(t){t[0]='⚙ Ajustes (sonido y voz)';t[1]=()=>openSettings()}});
 
-guard('boot',()=>{readHash().then(r=>{if(r==='open')openSettings('cuenta')}).catch(()=>{});
+guard('boot',()=>{readHash().then(r=>{if(r==='open')openAccount()}).catch(()=>{});
  if(S)setTimeout(()=>syncNow(),1200)});
 window.__v29={SND,CAT,get nodes(){return cg},applyGains,openSettings,collect,mergeBlobs,applyBlob,cleanKeys,smart,syncNow,CONFIGURED,get session(){return S},get status(){return st}};
 })();
